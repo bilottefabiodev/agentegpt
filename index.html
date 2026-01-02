@@ -3,50 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acessando Agente GPT...</title>
+    <title>Acessar Agente | Tatiana Marx</title>
 
     <style>
+        /* ESTILO CLEAN E PREMIUM */
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
+            background-color: #f0f2f5;
+            color: #1c1e21;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
-            text-align: center;
             padding: 20px;
+            text-align: center;
         }
-        
-        h3 { margin-bottom: 10px; color: #2c3e50; }
-        p { margin-top: 0; color: #7f8c8d; }
 
-        .loader {
-            border: 4px solid #e0e0e0;
-            border-top: 4px solid #10a37f;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
+
+        .icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #10a37f; /* Verde ChatGPT */
+        }
+
+        p {
+            font-size: 16px;
+            color: #606770;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
         .btn {
-            margin-top: 25px;
-            padding: 14px 28px;
+            display: block;
+            width: 100%;
+            padding: 16px 0;
             background-color: #10a37f;
             color: white;
             text-decoration: none;
             border-radius: 8px;
-            font-weight: 600;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-            box-shadow: 0 4px 6px rgba(16, 163, 127, 0.2);
-            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 6px rgba(16, 163, 127, 0.25);
+            transition: transform 0.2s, background-color 0.2s;
+            box-sizing: border-box; /* Garante que o padding não estoure a largura */
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #ccc;
         }
     </style>
 
@@ -62,81 +86,56 @@
     
     fbq('init', '185994519269249'); 
     fbq('track', 'PageView');
-    fbq('track', 'ViewContent'); 
+    
+    // Dispara o evento IMEDIATAMENTE ao abrir a página
+    fbq('track', 'ViewContent', {
+        content_name: 'Agente GPT - Tatiana Marx',
+        content_category: 'Lead Magnet'
+    });
     </script>
     </head>
 <body>
 
-    <div class="loader"></div>
-    <h3>Conectando ao App...</h3>
-    <p>Abrindo Tatiana Marx - Arquitetura de Capital</p>
-    
-    <a href="#" id="manualLink" class="btn">Abrir Agora</a>
+    <div class="card">
+        <div class="icon">🎁</div>
+        <h1>Presente Liberado!</h1>
+        <p>O agente <strong>Tatiana Marx - Arquitetura de Capital</strong> está pronto para uso.</p>
+        
+        <a href="#" id="actionBtn" class="btn">ACESSAR AGORA</a>
+        
+        <div class="footer">Toque no botão para abrir no app</div>
+    </div>
 
     <script>
-        // CONFIGURAÇÃO
-        var gptUrl = "https://chatgpt.com/g/g-695042595618819193d2d76e295e61ef-clone-tatiana-marx-arquitetura-de-capital-autoral";
+        // CONFIGURAÇÃO DOS LINKS
+        var gptLink = "https://chatgpt.com/g/g-695042595618819193d2d76e295e61ef-clone-tatiana-marx-arquitetura-de-capital-autoral";
         
-        // Android Intent: Tenta abrir o APP, se falhar, cai no browser (fallback)
-        // Isso é mais robusto que o intent simples
-        var androidUrl = "intent://chatgpt.com/g/g-695042595618819193d2d76e295e61ef-clone-tatiana-marx-arquitetura-de-capital-autoral#Intent;scheme=https;package=com.openai.chatgpt;S.browser_fallback_url=" + encodeURIComponent(gptUrl) + ";end";
+        // Link especial para Android (Tenta forçar o app)
+        var androidIntent = "intent://chatgpt.com/g/g-695042595618819193d2d76e295e61ef-clone-tatiana-marx-arquitetura-de-capital-autoral#Intent;scheme=https;package=com.openai.chatgpt;S.browser_fallback_url=" + encodeURIComponent(gptLink) + ";end";
 
-        function getMobileOS() {
-            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            if (/android/i.test(userAgent)) return "Android";
-            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) return "iOS";
-            return "unknown";
+        // Detecta se é Android
+        function isAndroid() {
+            return /android/i.test(navigator.userAgent);
         }
 
-        function forceRedirect() {
-            var os = getMobileOS();
+        // Lógica do Clique no Botão
+        document.getElementById('actionBtn').onclick = function(e) {
             
-            if (os === "Android") {
-                // Tenta forçar a saída do navegador via substituição de local
-                window.location.replace(androidUrl);
-            } else {
-                // iOS e Desktop
-                window.location.replace(gptUrl);
+            
             }
-        }
 
-        // Configuração do Botão Manual
-        var btn = document.getElementById('manualLink');
-        btn.onclick = function(e) {
-            e.preventDefault(); // Previne comportamento padrão para controlar o link
-            var os = getMobileOS();
-            if (os === "Android") {
-                window.location.href = androidUrl;
+            if (isAndroid()) {
+                // No Android, usamos o Intent (Força App)
+                // Precisamos de um pequeno delay para o pixel de clique processar, se houver
+                setTimeout(function() {
+                    window.location.href = androidIntent;
+                }, 100);
             } else {
-                window.location.href = gptUrl;
+                // iPhone e PC usam o link normal
+                // O iPhone abrirá o app automaticamente se instalado (Universal Link)
+                window.location.href = gptLink;
             }
         };
-
-        // AUTO-REDIRECT
-        // Usamos setTimeout para garantir que o Pixel dispare
-        setTimeout(function() {
-            // Tentativa 1: Simular um clique num elemento invisível (Bypass em alguns browsers)
-            var fakeLink = document.createElement('a');
-            
-            if (getMobileOS() === "Android") {
-                fakeLink.href = androidUrl;
-            } else {
-                fakeLink.href = gptUrl;
-            }
-            
-            fakeLink.style.display = 'none';
-            document.body.appendChild(fakeLink);
-            
-            // Tenta o clique programático
-            fakeLink.click();
-            
-            // Fallback de segurança: se o clique falhar, usa o replace normal
-            setTimeout(function(){
-                forceRedirect();
-            }, 100);
-
-        }, 1500);
-
     </script>
 
 </body>
