@@ -25,7 +25,7 @@
 
         .loader {
             border: 4px solid #e0e0e0;
-            border-top: 4px solid #10a37f; /* Verde característico do ChatGPT */
+            border-top: 4px solid #10a37f;
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -38,7 +38,7 @@
         .btn {
             margin-top: 25px;
             padding: 14px 28px;
-            background-color: #10a37f; /* Verde ChatGPT */
+            background-color: #10a37f;
             color: white;
             text-decoration: none;
             border-radius: 8px;
@@ -46,9 +46,7 @@
             font-size: 16px;
             transition: background-color 0.3s ease;
             box-shadow: 0 4px 6px rgba(16, 163, 127, 0.2);
-        }
-        .btn:hover {
-            background-color: #0d8a6a;
+            cursor: pointer;
         }
     </style>
 
@@ -70,25 +68,19 @@
 <body>
 
     <div class="loader"></div>
-    <h3>Conectando ao Agente...</h3>
-    <p>Abrindo "Tatiana Marx - Arquitetura de Capital" no seu app.</p>
+    <h3>Conectando ao App...</h3>
+    <p>Abrindo Tatiana Marx - Arquitetura de Capital</p>
     
-    <a href="#" id="manualLink" class="btn">Abrir Agente Agora</a>
+    <a href="#" id="manualLink" class="btn">Abrir Agora</a>
 
     <script>
-        // --- CONFIGURAÇÃO ---
-        // Apenas a parte final do link (o slug depois de /g/)
-        // Link original: https://chatgpt.com/g/g-695042595618819193d2d76e295e61ef-clone-tatiana-marx-arquitetura-de-capital-autoral
-        var gptSlug = "g-695042595618819193d2d76e295e61ef-clone-tatiana-marx-arquitetura-de-capital-autoral";
+        // CONFIGURAÇÃO
+        var gptUrl = "https://chatgpt.com/g/g-695042595618819193d2d76e295e61ef-clone-tatiana-marx-arquitetura-de-capital-autoral";
         
-        // Montagem dos Links
-        var baseUrl = "chatgpt.com/g/" + gptSlug;
-        var httpsLink = "https://" + baseUrl; // Link Padrão
-        
-        // Intent do Android (Força o pacote com.openai.chatgpt)
-        var androidIntent = "intent://" + baseUrl + "#Intent;package=com.openai.chatgpt;scheme=https;end;";
+        // Android Intent: Tenta abrir o APP, se falhar, cai no browser (fallback)
+        // Isso é mais robusto que o intent simples
+        var androidUrl = "intent://chatgpt.com/g/g-695042595618819193d2d76e295e61ef-clone-tatiana-marx-arquitetura-de-capital-autoral#Intent;scheme=https;package=com.openai.chatgpt;S.browser_fallback_url=" + encodeURIComponent(gptUrl) + ";end";
 
-        // Função de Detecção
         function getMobileOS() {
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
             if (/android/i.test(userAgent)) return "Android";
@@ -96,30 +88,54 @@
             return "unknown";
         }
 
-        function redirect() {
+        function forceRedirect() {
             var os = getMobileOS();
             
             if (os === "Android") {
-                // No Android forçamos via Intent
-                window.location.href = androidIntent;
+                // Tenta forçar a saída do navegador via substituição de local
+                window.location.replace(androidUrl);
             } else {
-                // iOS e Desktop vão pelo link normal (iOS abre o app via Universal Link se instalado)
-                window.location.href = httpsLink;
+                // iOS e Desktop
+                window.location.replace(gptUrl);
             }
         }
 
-        // Configura botão manual
-        document.getElementById('manualLink').href = httpsLink;
-        document.getElementById('manualLink').onclick = function(e) {
-            // Se for Android, tentamos forçar o app também no clique
-            if (getMobileOS() === "Android") {
-                e.preventDefault();
-                window.location.href = androidIntent;
+        // Configuração do Botão Manual
+        var btn = document.getElementById('manualLink');
+        btn.onclick = function(e) {
+            e.preventDefault(); // Previne comportamento padrão para controlar o link
+            var os = getMobileOS();
+            if (os === "Android") {
+                window.location.href = androidUrl;
+            } else {
+                window.location.href = gptUrl;
             }
         };
 
-        // Dispara após 1.5s (Tempo para o Pixel carregar)
-        setTimeout(redirect, 1500);
+        // AUTO-REDIRECT
+        // Usamos setTimeout para garantir que o Pixel dispare
+        setTimeout(function() {
+            // Tentativa 1: Simular um clique num elemento invisível (Bypass em alguns browsers)
+            var fakeLink = document.createElement('a');
+            
+            if (getMobileOS() === "Android") {
+                fakeLink.href = androidUrl;
+            } else {
+                fakeLink.href = gptUrl;
+            }
+            
+            fakeLink.style.display = 'none';
+            document.body.appendChild(fakeLink);
+            
+            // Tenta o clique programático
+            fakeLink.click();
+            
+            // Fallback de segurança: se o clique falhar, usa o replace normal
+            setTimeout(function(){
+                forceRedirect();
+            }, 100);
+
+        }, 1500);
 
     </script>
 
