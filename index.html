@@ -121,7 +121,9 @@
         // Lógica do Clique no Botão
         document.getElementById('actionBtn').onclick = function(e) {
             
-            
+            // Opcional: Rastrear o clique no botão como "Lead" ou "InitiateCheckout"
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'Lead'); 
             }
 
             if (isAndroid()) {
